@@ -443,6 +443,15 @@
   }
   function postRemote(entry){
     if(!LEADERBOARD_URL) return;
+    // metodo 1: POST (il più affidabile con doPost)
+    try {
+      fetch(LEADERBOARD_URL, {
+        method:'POST', mode:'no-cors',
+        headers:{'Content-Type':'text/plain;charset=utf-8'},
+        body: JSON.stringify(entry)
+      }).catch(()=>{});
+    } catch(e){}
+    // metodo 2: GET beacon (fallback se POST bloccato, richiede doGet nello script)
     try {
       const q = '?name=' + encodeURIComponent(entry.name)
               + '&score=' + encodeURIComponent(entry.score)
@@ -450,9 +459,7 @@
               + '&lvl='   + encodeURIComponent(entry.lvl || '')
               + '&rev='   + encodeURIComponent(entry.rev || 0)
               + '&t='     + Date.now();
-      // beacon via <img>: invio cross-origin senza problemi di CORS
-      const img = new Image();
-      img.src = LEADERBOARD_URL + q;
+      new Image().src = LEADERBOARD_URL + q;
     } catch(e){}
   }
   function renderBoard(highlightTs){
